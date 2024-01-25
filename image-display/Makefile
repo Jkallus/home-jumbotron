@@ -2,16 +2,18 @@
 CXX := g++
 LD := $(CXX)
 
-# Compiler flags. -I is to include the header file directories.
-CXXFLAGS := -Wall -Iinclude -std=c++11 $(shell GraphicsMagick++-config --cxxflags --cppflags)
-
-# Linker flags. You'll need to link your executable with required libraries.
-LDFLAGS := -lrt -lm -lpthread $(shell GraphicsMagick++-config --ldflags --libs)
-
 # Define the directories
 SRCDIR := src
 BINDIR := bin
 INCDIR := include
+CPPZMQ_INCDIR := 3rdparty/cppzmq # Path to cppzmq includes
+
+# Compiler flags. -I is to include the header file directories.
+CXXFLAGS := -Wall -Iinclude -I$(CPPZMQ_INCDIR) -std=c++11 $(shell GraphicsMagick++-config --cxxflags --cppflags)
+
+# Linker flags. You'll need to link your executable with required libraries.
+# Added -lzmq to link against ZeroMQ
+LDFLAGS := -lrt -lm -lpthread -lzmq $(shell GraphicsMagick++-config --ldflags --libs)
 
 # Additional flags for the RGB Matrix library, replace with your path
 RGB_INCDIR := 3rdparty/rpi-rgb-led-matrix/include

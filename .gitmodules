@@ -1,3 +1,6 @@
 [submodule "image-display/3rdparty/rpi-rgb-led-matrix"]
 	path = image-display/3rdparty/rpi-rgb-led-matrix
 	url = https://github.com/hzeller/rpi-rgb-led-matrix.git
+[submodule "image-display/3rdparty/cppzmq"]
+	path = image-display/3rdparty/cppzmq
+	url = https://github.com/zeromq/cppzmq.git
