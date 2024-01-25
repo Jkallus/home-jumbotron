@@ -1,0 +1,21 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug image-display",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/image-display/bin/image-display",
+            "args": ["--led-cols=64", "--led-rows=64", "--led-chain=2", "${workspaceFolder}/image-display/test/test.png"],
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "MIMode": "gdb",
+            "miDebuggerPath": "${workspaceFolder}/image-display/scripts/gdb-sudo.sh",
+            "preLaunchTask": "make all"
+        }
+    ]
+}
