@@ -23,11 +23,13 @@ sock.bind("tcp://*:5555")
 logger.debug("Accessing the webcam")
 cap = cv2.VideoCapture(0)  # Ensure the webcam index is correct (0 is typically the default)
 
+ret, frame = cap.read()
+
 try:
     while True:
         logger.debug("Capturing frame")
         # Capture frame-by-frame
-        ret, frame = cap.read()
+        #ret, frame = cap.read()
         if not ret:
             logger.error("Failed to grab frame")
             break
@@ -54,7 +56,7 @@ try:
 
         # Create a bytes buffer for the image and save as PNG
         buf = BytesIO()
-        img.save(buf, format='PNG')
+        img.save(buf, format='PNG', optimize=True)
 
         # Byte data
         img_data = buf.getvalue()
@@ -66,7 +68,7 @@ try:
         logger.debug("Sent image data over ZeroMQ")
 
         # Frame sending interval
-        #time.sleep(0.1)
+        time.sleep(1.0/ 30)
         # Here you could add a display the image if desired.
         # cv2.imshow('Frame', rgb_frame)
         # if cv2.waitKey(1) & 0xFF == ord('q'):
