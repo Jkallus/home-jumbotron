@@ -16,6 +16,14 @@
             "MIMode": "gdb",
             "miDebuggerPath": "${workspaceFolder}/image-display/scripts/gdb-sudo.sh",
             "preLaunchTask": "make all"
+        },
+        {
+            "name": "Debug image-sender",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/image-sender/sender.py",
+            "args": [],
+            "console": "integratedTerminal",
         }
     ]
 }

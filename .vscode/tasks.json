@@ -26,6 +26,49 @@
             "problemMatcher": [
                 "$gcc"
             ]
+        },
+        {
+            "label": "Run image-display",
+            "type": "shell",
+            "command": "${workspaceFolder}/image-display/scripts/run-image-display.sh",
+            "args": [
+                "--led-cols=64",
+                "--led-rows=64",
+                "--led-chain=2",
+                "--led-slowdown-gpio=3",
+                "${workspaceFolder}/image-display/test/test.png"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "clear": false
+            },
+            "dependsOn": ["make all"],
+        },
+        {
+            "label": "Run image-sender",
+            "type": "shell",
+            "command": "python",
+            "args": [
+                "${workspaceFolder}/image-sender/sender.py"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "clear": false
+            }
         }
     ]
 }
