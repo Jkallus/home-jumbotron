@@ -54,7 +54,7 @@
         {
             "label": "Run image-sender",
             "type": "shell",
-            "command": "python",
+            "command": "${workspaceFolder}/image-sender/venv/bin/python",
             "args": [
                 "${workspaceFolder}/image-sender/sender.py"
             ],
