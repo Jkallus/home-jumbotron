@@ -1,23 +1,25 @@
 from io import BytesIO
 from PIL import Image, ImageDraw, ImageFont
 import os
+from datetime import datetime
+import pytz
 
 def get_buffer_bytes_from_img(img: Image) -> bytes:
     buffer = BytesIO()
-    img.save(buffer, format='PNG', optimize=True)
+    img.save(buffer, format='PNG')
     image_byte_buffer = buffer.getvalue()
     buffer.close()
     return image_byte_buffer
 
 def get_test_image() -> Image:
-    font_path = "/home/dietpi/home-jumbotron/image-sender/fonts/39335_UniversCondensed.ttf"
+    font_path = os.getcwd() + "/image-sender/fonts/10x20.pil"
     font_size = 24
-    font = ImageFont.truetype(font_path, font_size)
+    font = ImageFont.load(font_path)
 
 
 
     # Specify the size of the image
-    image_size = (64, 64)
+    image_size = (128, 64)
     # Specify the background color (black) and text color (green)
     background_color = (0, 0, 0)  # Black
     text_color = (0, 255, 0)  # Green
@@ -29,7 +31,14 @@ def get_test_image() -> Image:
 
     # Specify the position and text to render
     text_position = (0, 0)  # Top left corner of the image
-    text = "Hello"
+
+    
+    timezone = pytz.timezone('America/New_York')
+    current_time = datetime.now(pytz.utc)
+    adjusted_time = current_time.astimezone(timezone)
+    
+
+    text = adjusted_time.strftime("%I:%M:%S.%f")[:-3]
 
     # Render the text on the image
     draw.text(text_position, text, font=font, fill=text_color)

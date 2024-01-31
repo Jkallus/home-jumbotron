@@ -21,7 +21,7 @@
             "name": "Debug image-sender",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/image-sender/sender.py",
+            "program": "${workspaceFolder}/image-sender/main.py",
             "args": [],
             "console": "integratedTerminal",
         }

@@ -56,7 +56,7 @@
             "type": "shell",
             "command": "${workspaceFolder}/image-sender/venv/bin/python",
             "args": [
-                "${workspaceFolder}/image-sender/sender.py"
+                "${workspaceFolder}/image-sender/main.py"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"
