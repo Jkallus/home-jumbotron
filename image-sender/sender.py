@@ -5,6 +5,7 @@ from PIL import Image, ImageDraw
 from io import BytesIO
 import time
 import logging
+from image_generator import generate_moving_square_image, get_buffer_bytes_from_img, get_test_image
 
 # Initialize logging
 logger = logging.getLogger(__name__)
@@ -19,55 +20,16 @@ logger.debug("Setting up the publisher socket on TCP port 5555")
 sock = context.socket(zmq.PUB)
 sock.bind("tcp://*:5555")
 
-
 # Global variables for square's position and movement direction
 square_x_position = 31
 movement_direction = 1  # 1 for right, -1 for left
 
-def generate_moving_square_image(square_y_position):
-    global square_x_position, movement_direction
-    
-    # Set square properties and image size
-    square_size = 4
-    img_size = 64
-    square_color = (0, 255, 0)  # Green color in RGB
-    background_color = (0, 0, 0)  # Black color in RGB
-    
-    # Create new image with black background
-    img = Image.new("RGB", (img_size, img_size), background_color)
-    draw = ImageDraw.Draw(img)
-    
-    # Calculate the square's corner positions
-    square_left = square_x_position
-    square_right = square_left + square_size
-    square_top = square_y_position
-    square_bottom = square_top + square_size
-    
-    # Draw the green square
-    draw.rectangle([(square_left, square_top), (square_right - 1, square_bottom - 1)], fill=square_color)
-    
-    # Update square_x_position for next call
-    square_x_position += movement_direction
-    
-    # Check for horizontal bounds and change direction if necessary. 
-    if square_right >= (img_size - 1) and movement_direction > 0:
-        movement_direction *= -1  # Reverse direction to left
-    elif square_left <= 0 and movement_direction < 0:
-        movement_direction *= -1  # Reverse direction to right
-
-    # Convert image to byte buffer
-    buffer = BytesIO()
-    img.save(buffer, format='PNG')
-    image_byte_buffer = buffer.getvalue()
-    buffer.close()
-
-    return img, image_byte_buffer
-
-
 try:
     while True:
         logger.debug("Getting next frame")
-        _, frame_buffer = generate_moving_square_image(28)
+        #_, frame_buffer = generate_moving_square_image(28)
+        test_img = get_test_image()
+        frame_buffer = get_buffer_bytes_from_img(test_img)
         logger.debug("Got frame")
         # Prepare and send the images over ZeroMQ
         topic = '/frames'
@@ -75,7 +37,7 @@ try:
         logger.debug("Sent image data over ZeroMQ")
 
         # Frame sending interval
-        time.sleep(1.0/ 120)
+        time.sleep(1.0/ 60)
 except KeyboardInterrupt:
     # Handle manual interrupt, clean up camera and close sockets
     logger.info("Interrupt received, stopping...")
