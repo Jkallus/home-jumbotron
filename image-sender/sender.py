@@ -15,11 +15,13 @@ class ZMQSender:
 
     def sender(self):
         while(True):
+            logger.debug("Getting frame from queue")
             frame = self.frame_queue.get()
             if frame is None:
                 break
             try:
                 topic = '/frames'
+                logger.debug("Sending frame over ZMQ")
                 self.sock.send(topic.encode('ascii') + frame)
             except zmq.ZMQError as e:
                 logger.error(f"Failed to send frame: {e}")

@@ -32,7 +32,7 @@ class FrameSource():
 
     def get_frame(self) -> Image:
         # Create a new image with the specified size and color
-        logger.debug("Entered get_frame()")
+        
         
         self.draw.rectangle([(self.text_position[0], self.text_position[1]), (self.image_size[0], self.image_size[1])], fill=self.background_color)
 
@@ -44,5 +44,4 @@ class FrameSource():
         self.i = self.i + 1
         # Render the text on the image
         self.draw.text(self.text_position, text, font=self.font, fill=self.text_color)
-        logger.debug("Exiting get_frame()")
         return self.image

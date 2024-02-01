@@ -17,9 +17,12 @@ class FrameMaker():
         logger.info("Initialized FrameMaker")
 
     def generator(self):
-        frame_interval = 1.0 / 30  # Target frame interval for 30 FPS
+        frame_interval = 1.0 / 60  # Target frame interval for 60 FPS
+        last_frame_start_time = 0
+        current_frame_start_time = 0
         while self.running:
-            start_time = time.time()  # Record the start time
+            last_frame_start_time = current_frame_start_time
+            current_frame_start_time = time.time()
             
             logger.debug("Getting frame")
             image = self.frame_source.get_frame()
@@ -30,8 +33,11 @@ class FrameMaker():
             self.frame_queue.put(bytes)
             logger.debug("Frame put in queue")
             
+            frame_time = 1000 * (current_frame_start_time - last_frame_start_time)
+            logger.debug(f"Frame to frame time: {frame_time:.3f} ms")
+            
             end_time = time.time()  # Record the end time
-            processing_time = end_time - start_time  # Calculate processing time
+            processing_time = end_time - current_frame_start_time  # Calculate processing time
             
             # Calculate remaining time to wait, if processing_time < frame_interval
             time_to_wait = frame_interval - processing_time
@@ -43,8 +49,10 @@ class FrameMaker():
     def start(self):
         self.generator_thread = Thread(target=self.generator)
         self.running = True
+        logger.debug("Starting FrameMaker")
         self.generator_thread.start()
-        logger.info("Started FrameMaker")
+        logger.debug("FrameMaker Started")
+        
 
     def stop(self):
         self.running = False

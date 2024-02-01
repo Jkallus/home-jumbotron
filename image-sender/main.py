@@ -5,9 +5,11 @@ import time
 from sender import ZMQSender
 from image_generator import get_buffer_bytes_from_img, get_test_image
 from frame_maker import FrameMaker
+import log_config
+
+log_config.setup_logging()
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger.info("Image-Sender Started")
 
 frames: Queue[bytes] = Queue()
