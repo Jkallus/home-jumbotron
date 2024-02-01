@@ -1,4 +1,7 @@
 numpy==1.26.3
 opencv-python==4.9.0.80
 pillow==10.2.0
+pytz==2023.4
 pyzmq==25.1.2
+snakeviz==2.2.0
+tornado==6.4
