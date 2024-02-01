@@ -2,8 +2,9 @@ from queue import Queue
 import logging
 from threading import Thread
 import time
-
-from frame_source import FrameSource
+from frame_sources.frame_source import FrameSource
+from frame_sources.clock_frame_source import ClockFrameSource
+from frame_sources.count_frame_source import CountFrameSource
 from image_generator import get_buffer_bytes_from_img
 
 logger = logging.getLogger(__name__)
@@ -12,7 +13,7 @@ class FrameMaker():
     def __init__(self, command_queue: Queue[dict], frame_queue: Queue[bytes]):
         self.command_queue = command_queue
         self.frame_queue = frame_queue
-        self.frame_source: FrameSource = FrameSource()
+        self.frame_source: FrameSource = CountFrameSource()
         self.running = False
         logger.info("Initialized FrameMaker")
 
