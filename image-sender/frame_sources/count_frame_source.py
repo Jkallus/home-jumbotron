@@ -30,6 +30,9 @@ class CountFrameSource(FrameSource):
         self.draw.rectangle([(self.text_position[0], self.text_position[1]), (self.image_size[0], self.image_size[1])], fill=self.background_color)
 
         text = f"i: {self.i}"
+
+        logger.debug(f"Sending text: i: {self.i}")
+
         self.i = self.i + 1
         # Render the text on the image
         self.draw.text(self.text_position, text, font=self.font, fill=self.text_color)

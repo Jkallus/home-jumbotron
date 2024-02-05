@@ -2,6 +2,7 @@ from queue import Queue
 import logging
 from threading import Thread
 import time
+from frame_sources.clock_frame_source import ClockFrameSource
 from frame_sources.count_frame_source import CountFrameSource
 from frame_sources.frame_source import FrameSource
 from image_generator import get_buffer_bytes_from_img
