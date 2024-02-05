@@ -19,7 +19,7 @@ class FrameMaker():
         logger.info("Initialized FrameMaker")
 
     def generator(self):
-        frame_interval = 1.0 / 60  # Target frame interval for 60 FPS
+        frame_interval = 1.0 / 30  # Target frame interval for 60 FPS
         last_frame_start_time = 0
         current_frame_start_time = 0
         with self.frame_source:
