@@ -9,7 +9,7 @@ class USBCameraFrameSource(FrameSource):
     def __init__(self):
         super().__init__()
         
-    def get_frame(self) -> Image:
+    def create_frame(self) -> Image:
         logger.debug("Capturing frame")
         if not self.cap.isOpened():
             raise Exception("Camera is not initialized or opened")
@@ -44,6 +44,7 @@ class USBCameraFrameSource(FrameSource):
     def __enter__(self):
         logger.info("Initializing Webcam")
         self.cap = cv2.VideoCapture(0)  # Ensure the webcam index is correct (0 is typically the default)
+        return super().__enter__()
 
     def __exit__(self, exc_type, exc_value, traceback):
         logger.info("Releasing Webcam")

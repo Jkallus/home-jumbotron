@@ -27,7 +27,7 @@ frame_maker: FrameMaker = FrameMaker(command_queue=commands, frame_queue=frames,
 frame_maker.start()
 
 try:
-    current_source_idx = 0
+    current_source_idx = 1
     frame_maker.set_frame_source(sources[current_source_idx])
     start_time = time.time()
     

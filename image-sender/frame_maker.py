@@ -1,7 +1,11 @@
+from datetime import datetime
+import os
 from queue import Queue
 import logging
 from threading import Thread
 import time
+
+from PIL.Image import Image
 from frame_sources.clock_frame_source import ClockFrameSource
 from frame_sources.count_frame_source import CountFrameSource
 from frame_sources.frame_source import FrameSource
@@ -29,6 +33,8 @@ class FrameMaker():
                 
                 logger.debug("Getting frame")
                 image = self.frame_source.get_frame()
+
+                #self.write_debug_image(image)
                 
                 logger.debug("Getting bytes")
                 bytes = get_buffer_bytes_from_img(image)
@@ -64,3 +70,21 @@ class FrameMaker():
         self.running = False
         self.generator_thread.join()
         logger.info("Stopped FrameMaker")
+
+    def write_debug_image(self, image: Image):
+        cwd = os.getcwd()
+        # Create the 'debug_images' directory if it doesn't exist
+        debug_images_dir = os.path.join(cwd, 'debug_images')
+        os.makedirs(debug_images_dir, exist_ok=True)
+
+        # Generate a timestamp
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+
+        # Create the filename with the timestamp
+        filename = f'debug_image_{timestamp}.png'
+
+        # Construct the full file path
+        file_path = os.path.join(debug_images_dir, filename)
+
+        # Save the image to disk as a PNG file
+        image.save(file_path, 'PNG')

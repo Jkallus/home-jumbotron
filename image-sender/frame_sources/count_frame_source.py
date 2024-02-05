@@ -25,7 +25,7 @@ class CountFrameSource(FrameSource):
 
         self.i = 0
 
-    def get_frame(self) -> Image:
+    def create_frame(self) -> Image:
         # Create a new image with the specified size and color        
         self.draw.rectangle([(self.text_position[0], self.text_position[1]), (self.image_size[0], self.image_size[1])], fill=self.background_color)
 
