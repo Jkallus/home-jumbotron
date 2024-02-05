@@ -11,3 +11,9 @@ class FrameSource():
 
     def get_frame(self) -> Image:
         raise Exception("Get frame called on base framesource, need to override")
+    
+    def __enter__(self):
+        return self
+    
+    def __exit__(self, exc_type, exc_value, traceback):
+        pass

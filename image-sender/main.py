@@ -2,8 +2,10 @@ import logging
 from queue import Queue
 from threading import Thread
 import time
+from frame_sources.clock_frame_source import ClockFrameSource
+from frame_sources.count_frame_source import CountFrameSource
+from frame_sources.usb_cam_frame_source import USBCameraFrameSource
 from sender import ZMQSender
-from image_generator import get_buffer_bytes_from_img, get_test_image
 from frame_maker import FrameMaker
 import log_config
 
@@ -18,7 +20,7 @@ commands: Queue[dict] = Queue()
 sender: ZMQSender = ZMQSender(frames)
 sender.start()
 
-frame_maker: FrameMaker = FrameMaker(command_queue=commands, frame_queue=frames)
+frame_maker: FrameMaker = FrameMaker(command_queue=commands, frame_queue=frames, frame_source=CountFrameSource())
 
 try:        
     frame_maker.start()
