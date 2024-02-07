@@ -23,7 +23,7 @@ class FrameMaker():
         logger.info("Initialized FrameMaker")
 
     def generator(self):
-        frame_interval = 1.0 / 30  # Target frame interval for 60 FPS
+        frame_interval = 1.0 / 60  # Target frame interval for 60 FPS
         last_frame_start_time = 0
         current_frame_start_time = 0
         with self.frame_source:
@@ -31,16 +31,16 @@ class FrameMaker():
                 last_frame_start_time = current_frame_start_time
                 current_frame_start_time = time.time()
                 
-                logger.debug("Getting frame")
+                #logger.debug("Getting frame")
                 image = self.frame_source.get_frame()
 
                 #self.write_debug_image(image)
                 
-                logger.debug("Getting bytes")
+                #logger.debug("Getting bytes")
                 bytes = get_buffer_bytes_from_img(image)
                 
                 self.frame_queue.put(bytes)
-                logger.debug("Frame put in queue")
+                #logger.debug("Frame put in queue")
                 
                 frame_time = 1000 * (current_frame_start_time - last_frame_start_time)
                 logger.debug(f"Frame to frame time: {frame_time:.3f} ms")

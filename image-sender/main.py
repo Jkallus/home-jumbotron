@@ -20,12 +20,14 @@ controller = InputController()
 try:
     controller.start()
     while(True):
+        controller.set_source("Square")
+        time.sleep(10)
         controller.set_source("Count")
-        time.sleep(3)
-        controller.set_source("Clock")
-        time.sleep(3)
-        controller.set_source("Camera")
-        time.sleep(3)
+        time.sleep(10)
+        # controller.set_source("Clock")
+        # time.sleep(3)
+        # controller.set_source("Camera")
+        # time.sleep(3)
 except KeyboardInterrupt:
     # Handle manual interrupt, clean up camera and close sockets
     logger.info("Interrupt received, stopping...")

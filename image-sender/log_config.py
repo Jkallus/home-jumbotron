@@ -51,7 +51,7 @@ class ThreadedMemoryHandler(MemoryHandler):
             self.release()
 
 
-def setup_logging(logfile='application.log', buffer_size=1000, flush_level=logging.ERROR):
+def setup_logging(logfile='application.log', buffer_size=10000, flush_level=logging.ERROR):
     formatter = ElapsedTimeFormatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     
     # Create a file handler that logs messages to a file
