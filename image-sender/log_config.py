@@ -7,6 +7,8 @@ import threading
 import time
 import atexit
 
+log_config_logger = logging.getLogger('log_config')
+
 start_time = time.time()
 
 class ElapsedTimeFormatter(logging.Formatter):
@@ -22,6 +24,7 @@ class ThreadedMemoryHandler(MemoryHandler):
         self.flush_thread = threading.Thread(target=self.flusher)
         self.flush_thread.daemon = True
         self.flush_thread.start()
+        self._flush_event = threading.Event()  # Create an event to signal when flushing is done
 
     def flusher(self):
         while True:
@@ -29,22 +32,30 @@ class ThreadedMemoryHandler(MemoryHandler):
             for record in to_flush:
                 self.target.handle(record)
             self.flush_queue.task_done()
+            self._flush_event.set()  # Signal that flushing is done
 
     def flush(self):
         self.acquire()
         try:
             if len(self.buffer) > 0:
+                self._flush_event.clear()  # Clear the event before putting items in the queue
                 self.flush_queue.put(self.buffer)
                 self.buffer = []
-        finally:
+                self.release()  # Release the lock before waiting for the event
+                self._flush_event.wait()  # Wait for the flusher to signal that it's done
+            else:
+                self.release()
+        except Exception as e:
+            # Log exception if something goes wrong during flush
+            log_config_logger.exception("Exception occurred during flush: %s", e)
             self.release()
 
 
-def setup_logging(logfile='application.log', buffer_size=10000, flush_level=logging.ERROR):
+def setup_logging(logfile='application.log', buffer_size=1000, flush_level=logging.ERROR):
     formatter = ElapsedTimeFormatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     
     # Create a file handler that logs messages to a file
-    file_handler = logging.FileHandler(logfile, mode='a', encoding='utf-8')
+    file_handler = logging.FileHandler(logfile, mode='w', encoding='utf-8')
     file_handler.setFormatter(formatter)
     
     # Console handler for INFO level
@@ -73,3 +84,7 @@ def setup_logging(logfile='application.log', buffer_size=10000, flush_level=logg
 
     # Register the flush method of memory_handler to be called at exit
     atexit.register(memory_handler.flush)
+
+    log_config_logger.debug("Logging is set up with file: %s", logfile)
+
+    return memory_handler
