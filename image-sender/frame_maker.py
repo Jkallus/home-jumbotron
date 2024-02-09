@@ -1,4 +1,5 @@
 from datetime import datetime
+from io import BytesIO
 import os
 from queue import Queue
 import logging
@@ -10,11 +11,18 @@ from frame_sources.clock_frame_source import ClockFrameSource
 from frame_sources.count_frame_source import CountFrameSource
 from frame_sources.frame_source import FrameSource
 from frame_sources.usb_cam_frame_source import USBCameraFrameSource
-from image_generator import get_buffer_bytes_from_img
 
 logger = logging.getLogger(__name__)
 
 class FrameMaker():
+
+    def get_buffer_bytes_from_img(self, img: Image) -> bytes:
+        buffer = BytesIO()
+        img.save(buffer, format='PNG')
+        image_byte_buffer = buffer.getvalue()
+        buffer.close()
+        return image_byte_buffer
+
     def __init__(self, command_queue: Queue[dict], frame_queue: Queue[bytes], frame_source: FrameSource):
         self.command_queue = command_queue
         self.frame_queue = frame_queue
@@ -37,7 +45,7 @@ class FrameMaker():
                 #self.write_debug_image(image)
                 
                 #logger.debug("Getting bytes")
-                bytes = get_buffer_bytes_from_img(image)
+                bytes = self.get_buffer_bytes_from_img(image)
                 
                 self.frame_queue.put(bytes)
                 #logger.debug("Frame put in queue")
