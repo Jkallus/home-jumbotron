@@ -6,6 +6,7 @@ from frame_sources.clock_frame_source import ClockFrameSource
 from frame_sources.count_frame_source import CountFrameSource
 from frame_sources.frame_source import FrameSource
 from frame_sources.moving_green_square_source import MovingSquareSource
+from frame_sources.scrolling_text_frame_source import ScrollingTextFrameSource
 from frame_sources.usb_cam_frame_source import USBCameraFrameSource
 
 from sender import ZMQSender
@@ -26,7 +27,8 @@ class InputController:
             "Count": CountFrameSource(),
             "Clock": ClockFrameSource(),
             "Camera": USBCameraFrameSource(),
-            "Square": MovingSquareSource()
+            "Square": MovingSquareSource(),
+            "ScrollingText": ScrollingTextFrameSource()
         }
 
         self.frame_maker: FrameMaker = FrameMaker(command_queue=self.commands, frame_queue=self.frames, frame_source=self.sources["Clock"])

@@ -19,7 +19,7 @@ class ZMQSender:
         while self.running:
             #logger.debug("Getting frame from queue")
             try:
-                frame = self.frame_queue.get(timeout=0.5)
+                frame = self.frame_queue.get(timeout=1.0)
                 if frame is None:
                     continue
                 try:
