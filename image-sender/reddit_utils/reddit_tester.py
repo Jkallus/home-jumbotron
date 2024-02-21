@@ -1,9 +1,13 @@
 import praw
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 reddit = praw.Reddit(
-    client_id="aok8zQ9Tq1GXHLFz3OeEiQ",
-    client_secret="DJwveTOOEhWfKZ4a-sghgSdJBrLFWw",
-    user_agent="Celtics Live 1.0 by /u/jkcars"
+    client_id = os.getenv("REDDIT_CLIENT_ID"),
+    client_secret = os.getenv("REDDIT_CLIENT_SECRET"),
+    user_agent = os.getenv("REDDIT_USER_AGENT")
 )
 
 subreddit_name = 'bostonceltics'
@@ -23,3 +27,4 @@ submission_id = '19ax7b8'
 
 submission = reddit.submission(id=submission_id)
 
+print(submission.title)

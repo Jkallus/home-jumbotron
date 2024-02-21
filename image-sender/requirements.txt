@@ -6,6 +6,7 @@ opencv-python==4.9.0.80
 pillow==10.2.0
 praw==7.7.1
 prawcore==2.4.0
+python-dotenv==1.0.1
 pytz==2023.4
 pyzmq==25.1.2
 requests==2.31.0
