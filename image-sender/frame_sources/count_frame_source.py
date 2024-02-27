@@ -1,6 +1,7 @@
 import logging
 import os
 from PIL import Image, ImageDraw, ImageFont
+from PIL.Image import Image as PILImage
 from .frame_source import FrameSource
 
 logger = logging.getLogger(__name__)
@@ -25,7 +26,7 @@ class CountFrameSource(FrameSource):
 
         self.i = 0
 
-    def create_frame(self) -> Image:
+    def create_frame(self) -> PILImage:
         # Create a new image with the specified size and color        
         self.draw.rectangle([(self.text_position[0], self.text_position[1]), (self.image_size[0], self.image_size[1])], fill=self.background_color)
 

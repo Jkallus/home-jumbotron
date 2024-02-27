@@ -10,21 +10,21 @@ reddit = praw.Reddit(
     user_agent = os.getenv("REDDIT_USER_AGENT")
 )
 
-subreddit_name = 'bostonceltics'
+subreddit_name = 'lakers'
 
-# subreddit = reddit.subreddit(subreddit_name)
+subreddit = reddit.subreddit(subreddit_name)
 
-# # pinned_posts = []
-# # for submission in subreddit.hot(limit=5):
-# #         if submission.stickied:
-# #                 pinned_posts.append(submission)
+# pinned_posts = []
+# for submission in subreddit.hot(limit=5):
+#         if submission.stickied:
+#                 pinned_posts.append(submission)
 
-# first_pin = subreddit.sticky(number=1)
+first_pin = subreddit.sticky(number=2)
 
+print(first_pin.title)
 
+# submission_id = '19ax7b8'
 
-submission_id = '19ax7b8'
+# submission = reddit.submission(id=submission_id)
 
-submission = reddit.submission(id=submission_id)
-
-print(submission.title)
+# print(submission.title)

@@ -9,6 +9,7 @@ from PIL.Image import Image
 from PIL import ImageDraw, ImageFont
 from frame_sources.frame_source import FrameSource
 from image_utils.text_display import append_subframes, generate_subframe
+from reddit_utils.nba_comments_text_source import NBACommentsTextSource
 from reddit_utils.test_text_source import TestTextSource
 from reddit_utils.text_source import TextSource
 
@@ -20,26 +21,13 @@ class ScrollingTextFrameSource(FrameSource):
         font_path = os.path.join(os.getcwd(), "image-sender", "fonts", "clR6x12.pil")
         self.font = ImageFont.load(font_path)
 
-        self.text_source: TextSource = TestTextSource()
+        self.text_source = NBACommentsTextSource()
 
         # Specify the background color (black) and text color (green)
         self.text_color = (0, 255, 0)  # Green
         self.background_color = (0, 0, 0)  # Black
 
         logger.info("Initialized Scrolling Text FrameSource")
-
-        # self.messages = [
-        #     "Walsh has more to offer the big club than Lamar Stevens.",
-        #     "al taking his kid to see smart heart warming shit",
-        #     "Thank you, Marcus",
-        #     "Is this the point where they let the fans take a turn?",
-        #     "Fuck man, Smart without green-dyed hair hurts.",
-        #     "Well that was... awful. Surprised people aren't blaming Joe for the way... EVERYONE... consistently missed open shots.No biggie. In my opinion they seemed jet-lagged from the tip off. I'm confident next game will be far better.",
-        #     "Bad game for the Celtics but jet lagged is a lame ass excuse. Clippers played in Toronto the night before, you cant be serious that the Celtics seemed tired from their 3 hour flight and one day of rest.",
-        #     "Now this was a baaaad loss. Idek what to say. We got dominated. Lol",
-        #     "We got whopped. Hahaha",
-        #     "Well, that both blew & sucked..."
-        # ]
 
         self.image = PILImage.new("RGB", self.image_size, self.background_color)
         self.draw = ImageDraw.Draw(self.image)
@@ -48,7 +36,7 @@ class ScrollingTextFrameSource(FrameSource):
 
         self.subframes: list[Image] = [generate_subframe(message, self.font, (6, 12), self.image_size, self.text_color) for message in self.messages]
         self.appended: Image = append_subframes(self.subframes)
-        self.vertical_pixels_per_second = 7
+        self.vertical_pixels_per_second = 15
         self.window_offset = 0
 
         def text_swapper():

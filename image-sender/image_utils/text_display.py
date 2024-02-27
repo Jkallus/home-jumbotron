@@ -8,8 +8,6 @@ from PIL import ImageDraw
 from PIL.ImageFont import ImageFont
 from textwrap import wrap
 
-
-
 def wrap_text(text: str, font: ImageFont, font_size: Tuple[int, int], canvas_width: int) -> list:
     words = text.split()
     lines = []
@@ -33,7 +31,6 @@ def wrap_text(text: str, font: ImageFont, font_size: Tuple[int, int], canvas_wid
 
     return lines
 
-
 def write_debug_image(image: Image):
         cwd = os.getcwd()
         # Create the 'debug_images' directory if it doesn't exist
@@ -52,18 +49,14 @@ def write_debug_image(image: Image):
         # Save the image to disk as a PNG file
         image.save(file_path, 'PNG')
 
-# class Subframe:
-#     def __init__(self, img: Image, size: Tuple[int, int], paste_coordinate_y: int) -> None:
-#         self.img = img
-#         self.size = size
-#         self.is_active = False
-#         self.paste_coordinate = (0, paste_coordinate_y)
-
 def split_string_every_n_chars(input_string, n):
     return [input_string[i:i+n] for i in range(0, len(input_string), n)]
 
 def generate_subframe(text: str, font: ImageFont, font_size: Tuple[int, int], canvas_size: Tuple[int, int], fill: Tuple[int, int, int]) -> Image:
     # Wrap text into lines that fit the canvas width
+
+    text = text.encode('latin-1', 'ignore').decode('latin-1')
+
     lines = wrap_text(text, font, font_size, canvas_size[0])
 
     # Calculate the total height needed for the wrapped text
@@ -80,30 +73,7 @@ def generate_subframe(text: str, font: ImageFont, font_size: Tuple[int, int], ca
         draw.text((0, text_pos_y), line, font=font, fill=fill)
         text_pos_y += font_size[1]  # Move to the next line position
     
-    # Replace this with your actual function to save or display the image
-    # write_debug_image(base)
-
     return base
-
-
-    # message_width = len(text) * font_size[0]
-    # num_lines = ceil(message_width / canvas_size[0])
-    # chars_per_line = floor(canvas_size[0] / font_size[0])
-    # total_height = (num_lines + 1) * font_size[1] 
-    # lines = split_string_every_n_chars(text, chars_per_line)
-    
-    # base = PILImage.new("RGB", (canvas_size[0], total_height))
-    # draw: ImageDraw.ImageDraw = ImageDraw.Draw(base)
-
-    # text_pos_x = 0
-    # text_pos_y = 0
-
-    # for idx, value in enumerate(lines):
-    #     draw.text((text_pos_x, text_pos_y), value, font=font, fill=fill)
-    #     text_pos_y += font_size[1]
-    
-    # write_debug_image(base)
-    # return base
 
 def append_subframes(frames: list[Image]) -> Image:
     width = frames[0].width
