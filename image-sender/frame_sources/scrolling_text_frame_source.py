@@ -17,30 +17,40 @@ logger = logging.getLogger(__name__)
 
 class ScrollingTextFrameSource(FrameSource):
     def __init__(self):
-        super().__init__()
+        super().__init__("Scrolling Text")
         font_path = os.path.join(os.getcwd(), "image-sender", "fonts", "clR6x12.pil")
         self.font = ImageFont.load(font_path)
-
-        self.text_source = NBACommentsTextSource()
 
         # Specify the background color (black) and text color (green)
         self.text_color = (0, 255, 0)  # Green
         self.background_color = (0, 0, 0)  # Black
-
-        logger.info("Initialized Scrolling Text FrameSource")
-
         self.image = PILImage.new("RGB", self.image_size, self.background_color)
         self.draw = ImageDraw.Draw(self.image)
 
-        self.messages = self.text_source.get_new_messages()
+        self.run_swapper = False
 
-        self.subframes: list[Image] = [generate_subframe(message, self.font, (6, 12), self.image_size, self.text_color) for message in self.messages]
-        self.appended: Image = append_subframes(self.subframes)
-        self.vertical_pixels_per_second = 15
-        self.window_offset = 0
+        logger.info("Constructed Scrolling Text FrameSource")
+        
+        
+        
+    def create_frame(self) -> Image:
+        self.draw.rectangle(((0, 0), self.image_size), fill=self.background_color) # Empty the image
 
-        def text_swapper():
-            while(True):
+        left = 0
+        upper = 0 + floor(self.window_offset)
+        right = self.image_size[0]
+        lower = self.image_size[1] + floor(self.window_offset)
+        box = (left, upper, right, lower)
+        with self.appended_lock:
+            window = self.appended.crop(box)
+        
+        frame_time = 1 / 60
+        self.window_offset += self.vertical_pixels_per_second * frame_time
+
+        return window
+    
+    def text_swapper(self):
+            while(self.run_swapper):
                 crop_lower_edge = self.window_offset + self.image_size[1]
                 total_height = self.appended.size[1]
                 remaining_scroll = total_height - floor(crop_lower_edge)
@@ -63,23 +73,31 @@ class ScrollingTextFrameSource(FrameSource):
                         self.window_offset = 0
                 time.sleep(0.5)
                 pass
+    
+    def __enter__(self):
+        if not hasattr(self, 'text_source') or self.text_source is None:
+            try:
+                self.text_source = NBACommentsTextSource()
+            except Exception as ex:
+                logger.error("Exception occurred initializing NBACommentsTextSource", exc_info=True)
+                raise  # Re-raise the exception to handle it outside
         
-        self.appended_lock = threading.Lock()
-        self.update_thread = threading.Thread(target=text_swapper)
-        self.update_thread.start()
-        
-    def create_frame(self) -> Image:
-        self.draw.rectangle(((0, 0), self.image_size), fill=self.background_color) # Empty the image
+        self.messages = self.text_source.get_new_messages()
 
-        left = 0
-        upper = 0 + floor(self.window_offset)
-        right = self.image_size[0]
-        lower = self.image_size[1] + floor(self.window_offset)
-        box = (left, upper, right, lower)
-        with self.appended_lock:
-            window = self.appended.crop(box)
-        
-        frame_time = 1 / 60
-        self.window_offset += self.vertical_pixels_per_second * frame_time
+        self.subframes: list[Image] = [generate_subframe(message, self.font, (6, 12), self.image_size, self.text_color) for message in self.messages]
+        self.appended: Image = append_subframes(self.subframes)
+        self.vertical_pixels_per_second = 15
+        self.window_offset = 0
 
-        return window
+        if not hasattr(self, 'appended_lock'):
+            self.appended_lock = threading.Lock()
+        if not hasattr(self, 'update_thread') or not self.update_thread.is_alive():
+            self.run_swapper = True
+            self.update_thread = threading.Thread(target=self.text_swapper)
+            self.update_thread.start()
+
+        logger.info("Initialized Scrolling Text FrameSource")
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.run_swapper = False
+        self.update_thread.join()

@@ -66,4 +66,8 @@ class FlightDataSource:
             else:
                 flight["Direction"] = "In"
             data.append(flight)
+        logger.info(f"Got {len(data)} flights")
         return data
+    
+    def exit(self) -> bool:
+        return self.fr_api.logout()

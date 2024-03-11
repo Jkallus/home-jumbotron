@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 class CountFrameSource(FrameSource):
     def __init__(self):
-        super().__init__()
+        super().__init__("Count")
         # Load the font once during initialization
         font_path = os.path.join(os.getcwd(), "image-sender", "fonts", "10x20.pil")
         self.font = ImageFont.load(font_path)

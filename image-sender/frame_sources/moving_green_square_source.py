@@ -4,7 +4,7 @@ from frame_sources.frame_source import FrameSource
 
 class MovingSquareSource(FrameSource):
     def __init__(self):
-        super().__init__()
+        super().__init__("Moving Green Square")
         self.square_x_position = 31
         self.square_y_position = 20
         self.movement_direction = 1 # 1 for right, -1 for left
@@ -38,4 +38,4 @@ class MovingSquareSource(FrameSource):
         elif square_left <= 0 and self.movement_direction < 0:
             self.movement_direction *= -1  # Reverse direction to right
 
-        return img
+        return imgG

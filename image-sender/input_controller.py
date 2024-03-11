@@ -16,14 +16,11 @@ from sender import ZMQSender
 logger = logging.getLogger(__name__)
 
 class InputController:
-    def __init__(self) -> None:
+    def __init__(self, default_source: str | None = None) -> None:
         logger.info("Initializing InputController")
         self.frames: Queue[bytes] = Queue()
-        self.commands: Queue[bytes] = Queue()
-
         self.sender: ZMQSender = ZMQSender(self.frames)
         
-
         self.sources: dict[str, FrameSource] = {
             "Count": CountFrameSource(),
             "Clock": ClockFrameSource(),
@@ -33,7 +30,10 @@ class InputController:
             "FlightRadar24": FlightDataFrameSource()
         }
 
-        self.frame_maker: FrameMaker = FrameMaker(command_queue=self.commands, frame_queue=self.frames, frame_source=self.sources["Clock"])
+        if default_source != None:
+            self.frame_maker: FrameMaker = FrameMaker(frame_queue=self.frames, frame_source=self.sources[default_source])
+        else:
+            self.frame_maker: FrameMaker = FrameMaker(frame_queue=self.frames, frame_source=self.sources["Clock"])
         
 
     def start(self) -> None:

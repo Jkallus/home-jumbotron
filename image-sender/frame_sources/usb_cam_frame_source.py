@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 class USBCameraFrameSource(FrameSource):
     def __init__(self):
-        super().__init__()
+        super().__init__("USB Camera")
         
     def create_frame(self) -> Image:
         logger.debug("Capturing frame")

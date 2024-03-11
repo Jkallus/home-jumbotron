@@ -1,20 +1,21 @@
-from datetime import datetime
 from io import BytesIO
-import os
 from queue import Queue
 import logging
 from threading import Thread
 import time
-
 from PIL.Image import Image
-from frame_sources.clock_frame_source import ClockFrameSource
-from frame_sources.count_frame_source import CountFrameSource
+
 from frame_sources.frame_source import FrameSource
-from frame_sources.usb_cam_frame_source import USBCameraFrameSource
+from image_utils.text_display import write_debug_image
 
 logger = logging.getLogger(__name__)
 
-class FrameMaker():
+class FrameMaker:
+    def __init__(self, frame_queue: Queue[bytes], frame_source: FrameSource):
+        self.frame_queue = frame_queue
+        self.frame_source = frame_source
+        self.running = False
+        logger.info("Initialized FrameMaker")
 
     def get_buffer_bytes_from_img(self, img: Image) -> bytes:
         buffer = BytesIO()
@@ -22,13 +23,6 @@ class FrameMaker():
         image_byte_buffer = buffer.getvalue()
         buffer.close()
         return image_byte_buffer
-
-    def __init__(self, command_queue: Queue[dict], frame_queue: Queue[bytes], frame_source: FrameSource):
-        self.command_queue = command_queue
-        self.frame_queue = frame_queue
-        self.frame_source = frame_source
-        self.running = False
-        logger.info("Initialized FrameMaker")
 
     def generator(self):
         frame_interval = 1.0 / 60  # Target frame interval for 60 FPS
@@ -45,7 +39,7 @@ class FrameMaker():
                 if image == None:
                     raise Exception("Failed to get frame")
 
-                #self.write_debug_image(image)
+                #write_debug_image(image)
                 
                 #logger.debug("Getting bytes")
                 bytes = self.get_buffer_bytes_from_img(image)
@@ -68,12 +62,13 @@ class FrameMaker():
     def start(self):
         self.generator_thread = Thread(target=self.generator)
         self.running = True
-        logger.debug("Starting FrameMaker")
+        logger.info("Starting FrameMaker")
         self.generator_thread.start()
-        logger.debug("FrameMaker Started")
+        logger.info("FrameMaker Started")
 
     def set_frame_source(self, source: FrameSource):
         self.stop()
+        logger.info(f"Changing frame source to {source.name}")
         self.frame_source = source
         self.start()
         
@@ -81,5 +76,3 @@ class FrameMaker():
         self.running = False
         self.generator_thread.join()
         logger.info("Stopped FrameMaker")
-
-    

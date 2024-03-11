@@ -6,10 +6,12 @@ from PIL.Image import Image as PILImage
 logger = logging.getLogger(__name__)
 
 class FrameSource():
-    def __init__(self):
+    def __init__(self, name: str):
         # Specify the size of the image (Width, Height)
-        self.image_size = (128, 64)
-        self.send_black_frame = False
+        self.image_size = (128, 128)
+        self.send_black_frame_1 = False
+        self.send_black_frame_2 = False
+        self.name = name
 
     def get_frame(self) -> PILImage:
         if self.send_black_frame_1:

@@ -16,10 +16,10 @@ memory_handler = log_config.setup_logging()
 logger = logging.getLogger(__name__)
 logger.info("Image-Sender Started")
 
-controller = InputController()
+#controller = InputController("FlightRadar24")
+controller = InputController("ScrollingText")
 try:
     controller.start()
-    controller.set_source("ScrollingText")
     while(True):
         #controller.set_source("Square")
         time.sleep(10)

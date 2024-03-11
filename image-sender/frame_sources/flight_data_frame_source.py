@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 class FlightDataFrameSource(FrameSource):
     def __init__(self):
-        super().__init__()
+        super().__init__("Flight Data")
 
         font_path = os.path.join(os.getcwd(), "image-sender", "fonts", "5x8.pil")
         self.font = ImageFont.load(font_path)
@@ -30,7 +30,7 @@ class FlightDataFrameSource(FrameSource):
         y2 = os.getenv("Y2")
 
         if x1 is not None and y1 is not None and x2 is not None and y2 is not None:
-            box = Box(float(x1), float(y1), float(x2), float(y2))
+            self.box = Box(float(x1), float(y1), float(x2), float(y2))
         else:
             raise Exception("Failed to load environment variables for FlightRadar24 bounding box")
 
@@ -39,29 +39,19 @@ class FlightDataFrameSource(FrameSource):
         y = os.getenv("Y")
 
         if x is not None and y is not None:
-            home = Location(float(x), float(y))
+            self.home = Location(float(x), float(y))
         else:
             raise Exception("Failed to load environment variables for FlightRadar24 home location")
         
-        # Login
-        email = os.getenv("FR24_EMAIL")
-        password = os.getenv("FR24_PASSWORD")
+        self.run_updater = False
 
-        self.data_source = FlightDataSource(box, home, email, password)
+        logger.info("Constructed Flight Data FrameSource")
 
-        self.flight_data = self.data_source.get_flight_data()
-        self.flight_data_lock = Lock()
-
-        def updater():
-            while(True):
+    def updater(self):
+            while(self.run_updater):
                 with self.flight_data_lock:
                     self.flight_data = self.data_source.get_flight_data()
                 time.sleep(3)
-
-        self.update_thread = Thread(target=updater, name="FlightRadar24 Updater")
-        self.update_thread.start()
-
-        
 
     def create_frame(self) -> PILImage:
         with self.flight_data_lock:
@@ -83,3 +73,23 @@ class FlightDataFrameSource(FrameSource):
                 cursor_y += 8
 
         return self.image
+    
+    def __enter__(self):
+        # Login
+        self.email = os.getenv("FR24_EMAIL")
+        self.password = os.getenv("FR24_PASSWORD")
+
+        self.data_source = FlightDataSource(self.box, self.home, self.email, self.password)
+        self.flight_data = self.data_source.get_flight_data()
+        self.flight_data_lock = Lock()
+
+        self.run_updater = True
+        self.update_thread = Thread(target=self.updater, name="FlightRadar24 Updater")
+        self.update_thread.start()
+
+        logger.info("Initialized Flight Data FrameSource")
+    
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.run_updater = False
+        self.update_thread.join()
+        logger.info("Deinitialized Flight Data FrameSource")
