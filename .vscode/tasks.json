@@ -34,8 +34,9 @@
             "args": [
                 "--led-cols=64",
                 "--led-rows=64",
-                "--led-chain=2",
-                "--led-slowdown-gpio=3",
+                "--led-chain=4",
+                "--led-slowdown-gpio=4",
+                "--led-pixel-mapper=\"U-mapper\"",
                 "${workspaceFolder}/image-display/test/test.png"
             ],
             "options": {
