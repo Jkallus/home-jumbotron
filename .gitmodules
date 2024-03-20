@@ -4,3 +4,6 @@
 [submodule "image-display/3rdparty/cppzmq"]
 	path = image-display/3rdparty/cppzmq
 	url = https://github.com/zeromq/cppzmq.git
+[submodule "image-display/3rdparty/spdlog"]
+	path = image-display/3rdparty/spdlog
+	url = https://github.com/gabime/spdlog.git

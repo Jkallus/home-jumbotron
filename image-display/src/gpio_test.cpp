@@ -7,7 +7,7 @@
 using namespace std::chrono;
 
 // Define a debounce time in milliseconds
-const int debounceTimeMs = 100; // Adjust this value as needed
+const int debounceTimeMs = 20; // Adjust this value as needed
 
 // Keep track of the last interrupt time
 steady_clock::time_point lastInterruptTime = steady_clock::now();
@@ -26,7 +26,7 @@ void interrupt_callback(int gpio, int level, uint32_t tick) {
         lastInterruptTime = now;
 
         // Wait for 100 ms before reading the GPIO state
-        std::this_thread::sleep_for(milliseconds(100));
+        std::this_thread::sleep_for(milliseconds(10));
 
         // Read the current level of the GPIO pin
         int currentLevel = gpioRead(gpio);

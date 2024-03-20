@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 logger.info("Image-Sender Started")
 
 #controller = InputController("FlightRadar24")
-controller = InputController("ScrollingText")
+controller = InputController("Clock")
 try:
     controller.start()
     while(True):

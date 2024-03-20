@@ -4,10 +4,13 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/usr/include/GraphicsMagick"
+                "/usr/include/GraphicsMagick",
+                "${workspaceFolder}/image-display/3rdparty/spdlog/include",
+                "${workspaceFolder}/image-display/3rdparty/cppzmq",
+                "${workspaceFolder}/image-display/3rdparty/rpi-rgb-led-matrix/include"
             ],
             "defines": [],
-            "compilerPath": "/usr/bin/gcc",
+            "compilerPath": "/usr/bin/g++",
             "cStandard": "c17",
             "cppStandard": "gnu++17",
             "intelliSenseMode": "linux-gcc-arm64"
