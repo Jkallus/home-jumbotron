@@ -37,7 +37,6 @@
                 "--led-chain=4",
                 "--led-slowdown-gpio=4",
                 "--led-pixel-mapper=\"U-mapper\"",
-                "${workspaceFolder}/image-display/test/test.png"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"

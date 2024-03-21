@@ -13,7 +13,7 @@ const int debounceTimeMs = 20; // Adjust this value as needed
 steady_clock::time_point lastInterruptTime = steady_clock::now();
 
 // Interrupt callback function
-void interrupt_callback(int gpio, int level, uint32_t tick) {
+void button_interrupt_callback(int gpio, int level, uint32_t tick) {
     // Get the current time
     auto now = steady_clock::now();
 
@@ -55,7 +55,7 @@ int main() {
     gpioSetPullUpDown(inputPin, PI_PUD_UP);
 
     // Set up the interrupt callback for both rising and falling edge detection
-    if (gpioSetISRFunc(inputPin, EITHER_EDGE, 0, interrupt_callback) < 0) {
+    if (gpioSetISRFunc(inputPin, EITHER_EDGE, 0, button_interrupt_callback) < 0) {
         std::cerr << "Failed to set up ISR function." << std::endl;
         gpioTerminate();
         return 1;
