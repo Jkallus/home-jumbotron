@@ -20,7 +20,7 @@
 using namespace rgb_matrix;
 using namespace std::chrono;
 
-const std::string dev_address = "tcp://localhost:5555";
+const std::string dev_address = "tcp://jkallus-pc:5555";
 const std::string prod_address = "tcp://jumbotron:5555";
 
 // Global variables for managing the ZeroMQ connection
