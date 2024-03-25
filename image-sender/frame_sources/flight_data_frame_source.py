@@ -5,6 +5,7 @@ import time
 from PIL import ImageFont, Image, ImageDraw
 from PIL.Image import Image as PILImage
 from dotenv import load_dotenv
+from geopy import distance
 from flight_radar_utils.flight_data_source import Box, FlightDataSource, Location
 from frame_sources.frame_source import FrameSource
 
@@ -16,10 +17,11 @@ class FlightDataFrameSource(FrameSource):
     def __init__(self):
         super().__init__("Flight Data")
 
-        font_path = os.path.join(os.getcwd(), "image-sender", "fonts", "5x8.pil")
+        font_path = os.path.join(os.getcwd(), "image-sender", "fonts", "6x13.pil")
         self.font = ImageFont.load(font_path)
         self.background_color = (0, 0, 0)  # Black
-        self.text_color = (0, 255, 0)  # Green
+        self.arriving_color = (0, 255, 0)  # Green
+        self.departing_color = (255, 255, 0) # Red
         self.image = Image.new("RGB", self.image_size, self.background_color)
         self.draw = ImageDraw.Draw(self.image)
 
@@ -68,9 +70,22 @@ class FlightDataFrameSource(FrameSource):
                     distance_format = "0.0f"
                 else:
                     distance_format = "0.0f"
-                text = f"{flight['Aircraft']} {flight['Speed']:3d} {flight['Distance']:{distance_format}} {flight['FlightNumber'][:6]} {flight['Direction']}"
-                self.draw.text((0, cursor_y), text, font=self.font, fill=self.text_color)
-                cursor_y += 8
+
+                top_line = f"{flight['Aircraft']}, {flight['Distance']:{distance_format}}"
+                bottom_line = f"{flight['Origin']} {flight['FlightNumber']}"
+
+                color = None
+                if flight["Direction"] == "In":
+                    color = self.arriving_color
+                else:
+                    color = self.departing_color
+
+                #text = f"{flight['Aircraft']} {flight['Speed']:3d} {flight['Distance']:{distance_format}} {flight['FlightNumber'][:6]} {flight['Direction']}"
+                self.draw.text((0, cursor_y), top_line, font=self.font, fill=color)
+                cursor_y += 12
+                self.draw.text((0, cursor_y), bottom_line, font=self.font, fill=color)
+                cursor_y += 12
+                self.draw.line([(0, cursor_y), (self.image_size[1], cursor_y)], fill=(0,0,255))
 
         return self.image
     

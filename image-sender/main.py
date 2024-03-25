@@ -33,7 +33,10 @@ mqtt_availability_topic = f"{mqtt_topic}/availability"
 mqtt_online_payload = "online"
 mqtt_offline_payload = "offline"
 
-controller = InputController("Count")
+default_source = os.getenv("DEFAULT_SOURCE")
+if default_source is None:
+    default_source = "Clock"
+controller = InputController(default_source)
 
 def message_handler(command: dict, topic: str | None = None):
     if command["Command"] == "ChangeMode":
@@ -77,6 +80,9 @@ client.loop_start()
 run = True
 try:
     controller.start()
+    client.publish(f"{mqtt_topic}/stat", json.dumps({
+        "CurrentMode": controller.current_source
+    }))
     while(run):
         time.sleep(1)
 except KeyboardInterrupt:

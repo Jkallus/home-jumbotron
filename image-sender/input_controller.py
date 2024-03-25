@@ -30,7 +30,7 @@ class InputController:
             "Camera": USBCameraFrameSource(),
             "Square": MovingSquareSource(),
             "ScrollingText": ScrollingTextFrameSource(),
-            "FlightRadar24": FlightDataFrameSource()
+            "Plane Tracker": FlightDataFrameSource()
         }
 
         if default_source != None:
@@ -38,6 +38,7 @@ class InputController:
         else:
             self.frame_maker: FrameMaker = FrameMaker(frame_queue=self.frames, frame_source=self.sources["Clock"])
         
+        self.current_source = default_source
 
     def start(self) -> None:
         self.sender.start()
@@ -54,3 +55,4 @@ class InputController:
             raise InvalidSourceException(f"Invalid source: {source_name}")
         else:
             self.frame_maker.set_frame_source(self.sources[source_name])
+            self.current_source = source_name
