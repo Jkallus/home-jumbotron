@@ -1,10 +1,12 @@
+import json
 import logging
 import time
 import os
 import paho.mqtt.client as mqtt
 from paho.mqtt.enums import CallbackAPIVersion
+from test.test_monitoring import ExceptionRecorder
 
-from input_controller import InputController
+from input_controller import InputController, InvalidSourceException
 import log_config
 
 memory_handler = log_config.setup_logging()
@@ -14,7 +16,6 @@ logger.info("Image-Sender Started")
 class MQTTConfigException(Exception):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
-
 
 mqtt_broker = os.getenv("MQTT_BROKER")
 if mqtt_broker is None:
@@ -32,6 +33,19 @@ mqtt_availability_topic = f"{mqtt_topic}/availability"
 mqtt_online_payload = "online"
 mqtt_offline_payload = "offline"
 
+controller = InputController("Count")
+
+def message_handler(command: dict, topic: str | None = None):
+    if command["Command"] == "ChangeMode":
+        target_mode = command["TargetMode"]
+        try:
+            controller.set_source(target_mode)
+            client.publish(f"{mqtt_topic}/stat", json.dumps({
+                "CurrentMode": target_mode
+            }))
+        except InvalidSourceException as e:
+            logger.warn(f"Requested source name {target_mode} is invalid")
+        
 def on_connect(client: mqtt.Client, userData, flags: dict, rc: int, properties=None):
     logger.info(f"Connected to MQTT Broker with result code: {rc}")    
     logger.info(f"Subscribing to MQTT topic: '{mqtt_topic}/cmnd'")
@@ -40,6 +54,14 @@ def on_connect(client: mqtt.Client, userData, flags: dict, rc: int, properties=N
 
 def on_message(client: mqtt.Client, userData, msg: mqtt.MQTTMessage):
     logger.info(f"Received message: '{msg.payload.decode()} on topic '{msg.topic}' with QoS {msg.qos}")
+
+    if msg.topic == f"{mqtt_topic}/cmnd":
+        command_str = msg.payload.decode()
+        try:
+            command = json.loads(command_str)
+            message_handler(command, msg.topic)
+        except json.JSONDecodeError as e:
+            logger.error(f"Invalid command format: {command_str}")
 
 client = mqtt.Client(CallbackAPIVersion.VERSION2)
 client.on_connect = on_connect
@@ -52,27 +74,17 @@ client.connect(mqtt_broker, port_num, mqtt_keepalive_interval)
 logger.info("Starting MQTT client loop")
 client.loop_start()
 
-
-#controller = InputController("FlightRadar24")
-controller = InputController("Clock")
+run = True
 try:
     controller.start()
-    while(True):
-        #controller.set_source("Square")
-        time.sleep(10)
-        #controller.set_source("Count")
-        #time.sleep(10)
-        # controller.set_source("Clock")
-        # time.sleep(3)
-        # controller.set_source("Camera")
-        # time.sleep(3)
+    while(run):
+        time.sleep(1)
 except KeyboardInterrupt:
-    # Handle manual interrupt, clean up camera and close sockets
     logger.info("Interrupt received, stopping...")
+    run = False
 except Exception as e:
     logger.exception("Caught an exception")
 finally:
-    # When everything done, release the capture and close resources
     controller.stop()
     logger.info("Released all controller resources")
     client.publish(mqtt_availability_topic, payload=mqtt_offline_payload, qos=1, retain=True)

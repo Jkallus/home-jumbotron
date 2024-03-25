@@ -54,7 +54,7 @@
         {
             "label": "Run image-sender",
             "type": "shell",
-            "command": "${workspaceFolder}/image-sender/venv/bin/python",
+            "command": "${command:extension.pickRemoteProcess}",
             "args": [
                 "${workspaceFolder}/image-sender/main.py"
             ],
@@ -68,6 +68,12 @@
                 "focus": false,
                 "panel": "shared",
                 "clear": false
+            },
+            "windows": {
+                "command": "${workspaceFolder}\\image-sender\\venv\\Scripts\\python.exe"
+            },
+            "linux": {
+                "command": "${workspaceFolder}/image-sender/venv/bin/python"
             }
         }
     ]

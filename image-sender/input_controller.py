@@ -15,6 +15,9 @@ from sender import ZMQSender
 
 logger = logging.getLogger(__name__)
 
+class InvalidSourceException(Exception):
+    pass
+
 class InputController:
     def __init__(self, default_source: str | None = None) -> None:
         logger.info("Initializing InputController")
@@ -47,4 +50,7 @@ class InputController:
         logging.info("InputController stopped")
 
     def set_source(self, source_name: str):
-        self.frame_maker.set_frame_source(self.sources[source_name])
+        if source_name not in self.sources:
+            raise InvalidSourceException(f"Invalid source: {source_name}")
+        else:
+            self.frame_maker.set_frame_source(self.sources[source_name])
