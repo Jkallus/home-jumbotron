@@ -94,6 +94,8 @@ def get_clock_frame() -> PILImage:
         # Save PNG to a blob
         png_blob = img.make_blob('png')
 
-    png_stream = BytesIO(png_blob)
-    pil_image = PIL.Image.open(png_stream)
+    with BytesIO(png_blob) as png_stream:
+        pil_image = PIL.Image.open(png_stream)
+        pil_image = pil_image.copy()
+    
     return pil_image
