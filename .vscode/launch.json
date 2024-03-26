@@ -38,6 +38,14 @@
             "program": "${workspaceFolder}/image-sender/reddit_utils/reddit_tester.py",
             "args": [],
             "console": "integratedTerminal"
+        },
+        {
+            "name": "Debug svgtester",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/image-sender/image_utils/svg_tester.py",
+            "args": [],
+            "console": "integratedTerminal"
         }
     ]
 }

@@ -78,7 +78,7 @@ if environment == "PROD":
     logger.info("Starting MQTT client loop")
     client.loop_start()
 elif environment == "DEV":
-    controller = InputController("Plane Tracker")
+    controller = InputController("Analog Clock")
 else:
     raise Exception("No environment set")
 

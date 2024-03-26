@@ -2,6 +2,7 @@
 import logging
 from queue import Queue
 from frame_maker import FrameMaker
+from frame_sources.analog_clock_frame_source import AnalogClockFrameSource
 from frame_sources.clock_frame_source import ClockFrameSource
 from frame_sources.count_frame_source import CountFrameSource
 from frame_sources.flight_data_frame_source import FlightDataFrameSource
@@ -30,7 +31,8 @@ class InputController:
             "Camera": USBCameraFrameSource(),
             "Square": MovingSquareSource(),
             "ScrollingText": ScrollingTextFrameSource(),
-            "Plane Tracker": FlightDataFrameSource()
+            "Plane Tracker": FlightDataFrameSource(),
+            "Analog Clock": AnalogClockFrameSource()
         }
 
         if default_source != None:
