@@ -21,7 +21,8 @@ class FlightDataFrameSource(FrameSource):
         self.font = ImageFont.load(font_path)
         self.background_color = (0, 0, 0)  # Black
         self.arriving_color = (0, 255, 0)  # Green
-        self.departing_color = (255, 255, 0) # Red
+        self.departing_color = (255, 255, 0) # yellow
+        self.over_color = (255, 255, 255) # White
         self.image = Image.new("RGB", self.image_size, self.background_color)
         self.draw = ImageDraw.Draw(self.image)
 
@@ -77,8 +78,10 @@ class FlightDataFrameSource(FrameSource):
                 color = None
                 if flight["Direction"] == "In":
                     color = self.arriving_color
-                else:
+                elif flight["Direction"] == "Out":
                     color = self.departing_color
+                elif flight["Direction"] == "Over":
+                    color = self.over_color
 
                 #text = f"{flight['Aircraft']} {flight['Speed']:3d} {flight['Distance']:{distance_format}} {flight['FlightNumber'][:6]} {flight['Direction']}"
                 self.draw.text((0, cursor_y), top_line, font=self.font, fill=color)
